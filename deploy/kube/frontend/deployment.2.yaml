@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend-advanced
+  labels:
+    app: frontend
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: frontend
+  template:
+    metadata:
+      labels:
+        app: frontend
+    spec:
+      nodeSelector:
+        kubernetes.io/hostname: rabbitmq-1  # Run the pods on node with this label
+      containers:
+      - name: nginx
+        image: dimak98/kube-fortunes-front:v1
+        ports:
+        - containerPort: 80
+        resources:
+          requests:
+            cpu: "50m"       # Requests 0.05 CPU core
+            memory: "64Mi"    # Requests 64 MiB of memory
+          limits:
+            cpu: "100m"       # Limits to 0.1 CPU core
+            memory: "128Mi"   # Limits to 128 MiB of memory
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 80
+          initialDelaySeconds: 5       # Delay before first check
+          periodSeconds: 10            # Check every 10 seconds
+          timeoutSeconds: 2            # Timeout for each check
+          failureThreshold: 3          # Restart after 3 consecutive failures
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 80
+          initialDelaySeconds: 5       
+          periodSeconds: 10            
+          timeoutSeconds: 2            
+          failureThreshold: 3          # Mark Pod unavailable after 3 failures
+          successThreshold: 1          # Consider Pod ready after 1 success
