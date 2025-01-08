@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kubernetes Fortune Teller</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 0;
+        }
+        h1 {
+            color: #007bff;
+            margin-top: 50px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 18px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        #fortune {
+            margin-top: 20px;
+            font-size: 24px;
+            color: #333;
+            padding: 20px;
+            border: 1px solid #ddd;
+            background-color: #fff;
+            display: inline-block;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        footer {
+            position: fixed;
+            bottom: 10px;
+            width: 100%;
+            text-align: center;
+            font-size: 12px;
+            color: #aaa;
+        }
+    </style>
+</head>
+<body>
+    <h1>Kubernetes Fortune Teller</h1>
+    <button onclick="getFortune()">Get Your Fortune</button>
+    <p id="fortune"></p>
+    <footer>Powered by Kubernetes and your backend API</footer>
+
+    <script>
+        async function getFortune() {
+            const fortuneElement = document.getElementById('fortune');
+            fortuneElement.innerText = 'Loading...';
+            try {
+                // Fetch the fortune from the backend API
+                const response = await fetch('/fortune');
+                if (!response.ok) throw new Error('Failed to fetch fortune!');
+                const data = await response.json();
+                fortuneElement.innerText = data.fortune || "No fortune found!";
+            } catch (error) {
+                console.error(error);
+                fortuneElement.innerText = "Oops! Something went wrong.";
+            }
+        }
+    </script>
+</body>
+</html>

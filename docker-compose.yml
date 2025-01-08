@@ -1,0 +1,45 @@
+version: '3.8'
+
+services:
+  database:
+    image: postgres:14
+    container_name: postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: kubefortunes
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: backend
+    environment:
+      DB_HOST: database
+      DB_PORT: 5432
+      DB_NAME: kubefortunes
+      DB_USER: postgres
+      DB_PASSWORD: password
+    depends_on:
+      - database
+    ports:
+      - "5000:5000"
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    environment:
+      BACKEND_URL: http://backend:5000
+
+volumes:
+  postgres_data:
